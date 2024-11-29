@@ -33,8 +33,10 @@ truncate table rds_erp_src_t_MATERIALSTOCK_update")
 materialstock_tm_bak <- function(dms_token) {
   sql=paste0("
 insert into rds_erp_src_t_MATERIALSTOCK_bak
-select　'999' AS FUSEORGID,a.fnumber ,b.FMINSTOCK ,b.FMAXSTOCK,b.FSAFESTOCK,
-c.FMINSTOCK,c.FMAXSTOCK,c.FSAFESTOCK ,GETDATE() AS FUPDATETIME
+select　'999' AS FUSEORGID,a.fnumber ,
+b.FMINSTOCK ,b.FSAFESTOCK,b.FMAXSTOCK,
+b.FIsEnableMinStock,b.FIsEnableSafeStock ,b.FIsEnableMaxStock,
+c.FMINSTOCK,c.FSAFESTOCK ,c.FMAXSTOCK,GETDATE() AS FUPDATETIME
  from  t_BD_Material　ａ
 inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
 inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER
@@ -59,12 +61,16 @@ materialstock_tm_update <- function(dms_token) {
   sql=paste0("
 UPDATE B
 SET 　b.FMINSTOCK =c.FMINSTOCK,
+b.FSAFESTOCK = c.FSAFESTOCK,
 b.FMAXSTOCK=c.FMAXSTOCK,
-b.FSAFESTOCK = c.FSAFESTOCK
+b.FIsEnableMinStock=c.FIsEnableMinStock,
+b.FIsEnableSafeStock =c.FIsEnableSafeStock,
+b.FIsEnableMaxStock=c.FIsEnableMaxStock
  from  t_BD_Material　ａ
 inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
 inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER
-where  a.FUSEORGID=124854")
+where  a.FUSEORGID=124854
+")
   res <-tsda::sql_update2(token =dms_token ,sql_str = sql)
 
 
