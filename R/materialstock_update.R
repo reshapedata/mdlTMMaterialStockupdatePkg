@@ -33,7 +33,7 @@ truncate table rds_erp_src_t_MATERIALSTOCK_update")
 materialstock_tm_bak <- function(dms_token) {
   sql=paste0("
 insert into rds_erp_src_t_MATERIALSTOCK_bak
-select　'999' AS FUSEORGID,a.fnumber ,
+select　d.FNUMBER AS FUSEORGID,a.fnumber ,
 b.FMINSTOCK ,b.FSAFESTOCK,b.FMAXSTOCK,
 b.FIsEnableMinStock,b.FIsEnableSafeStock ,b.FIsEnableMaxStock,
 c.FMINSTOCK ,c.FSAFESTOCK,c.FMAXSTOCK,
@@ -43,15 +43,15 @@ case c.FIsEnableMaxStock when '是' then '1' when '否' then '0'  end as FIsEnab
 GETDATE() AS FUPDATETIME
  from  t_BD_Material　ａ
 inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
-inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER
-where  a.FUSEORGID=124854")
+inner join T_ORG_ORGANIZATIONS d on a.FUSEORGID=d.FORGID
+inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER and c.FUSEORGID=d.fnumber")
   res <-tsda::sql_insert2(token =dms_token ,sql_str = sql)
 
   return(res)
 
 }
 
-#' erp更新物料kuncun
+#' erp更新物料库存
 #'
 #'
 #' @param dms_token
@@ -72,8 +72,8 @@ b.FIsEnableSafeStock =case c.FIsEnableSafeStock when '是' then '1' when '否' t
 b.FIsEnableMaxStock=case c.FIsEnableMaxStock when '是' then '1' when '否' then '0'  end
  from  t_BD_Material　ａ
 inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
-inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER
-where  a.FUSEORGID=124854
+inner join T_ORG_ORGANIZATIONS d on a.FUSEORGID=d.FORGID
+inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER  and c.FUSEORGID=d.fnumber
 ")
   res <-tsda::sql_update2(token =dms_token ,sql_str = sql)
 

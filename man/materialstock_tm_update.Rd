@@ -2,7 +2,7 @@
 % Please edit documentation in R/materialstock_update.R
 \name{materialstock_tm_update}
 \alias{materialstock_tm_update}
-\title{erp更新物料kuncun}
+\title{erp更新物料库存}
 \usage{
 materialstock_tm_update(dms_token)
 }
@@ -13,7 +13,7 @@ materialstock_tm_update(dms_token)
 
 }
 \description{
-erp更新物料kuncun
+erp更新物料库存
 }
 \examples{
 materialstock_tm_update()
