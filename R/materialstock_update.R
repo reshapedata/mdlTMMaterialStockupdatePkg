@@ -40,11 +40,12 @@ c.FMINSTOCK ,c.FSAFESTOCK,c.FMAXSTOCK,
 case c.FIsEnableMinStock when '是' then '1' when '否' then '0'  end as FIsEnableMinStock,
 case c.FIsEnableSafeStock when '是' then '1' when '否' then '0'  end as FIsEnableSafeStock,
 case c.FIsEnableMaxStock when '是' then '1' when '否' then '0'  end as FIsEnableMaxStock,
-GETDATE() AS FUPDATETIME
+GETDATE() AS FUPDATETIME,E.FPLANSAFESTOCKQTY AS FPLANSAFESTOCKQTY,C.FPLANSAFESTOCKQTY AS FPLANSAFESTOCKQTY_NEW
  from  t_BD_Material　ａ
 inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
 inner join T_ORG_ORGANIZATIONS d on a.FUSEORGID=d.FORGID
-inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER and c.FUSEORGID=d.fnumber")
+inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER and c.FUSEORGID=d.fnumber
+inner join T_BD_MATERIALPLAN e on a.FMATERIALID=e.FMATERIALID")
   res <-tsda::sql_insert2(token =dms_token ,sql_str = sql)
 
   return(res)
@@ -75,7 +76,18 @@ inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
 inner join T_ORG_ORGANIZATIONS d on a.FUSEORGID=d.FORGID
 inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER  and c.FUSEORGID=d.fnumber
 ")
-  res <-tsda::sql_update2(token =dms_token ,sql_str = sql)
+  tsda::sql_update2(token =dms_token ,sql_str = sql)
+  #更新计划属性安全库存
+  sql2=paste0("
+  UPDATE E
+SET 　E.FPLANSAFESTOCKQTY=C.FPLANSAFESTOCKQTY
+ from  t_BD_Material　ａ
+inner join t_BD_MaterialStock b　on a.FMATERIALID =b.FMATERIALID
+inner join T_ORG_ORGANIZATIONS d on a.FUSEORGID=d.FORGID
+inner　join　rds_erp_src_t_MATERIALSTOCK_update　c on a.FNUMBER=c.FMATERIALNUMBER  and c.FUSEORGID=d.fnumber
+inner join T_BD_MATERIALPLAN e on a.FMATERIALID=e.FMATERIALID
+")
+  res <-tsda::sql_update2(token =dms_token ,sql_str = sql2)
 
 
   return(res)
